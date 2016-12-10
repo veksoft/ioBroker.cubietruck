@@ -1,0 +1,41 @@
+{
+    "common": {
+        "name":                     "cubietruck",
+        "version":                  "0.0.1",
+	    "news": {
+			"0.0.1": {
+			  "en": "beta version",
+			  "de": "Betaversion",
+			  "ru": "Бета версия"
+			},
+			"0.0.0": {
+			  "en": "initial adapter",
+			  "de": "Initiale Version",
+			  "ru": "Первоначальный адаптер"
+			}
+		},
+        "title":                    "Cubietruck monitor",
+        "desc": {
+		"en": "Cubietruck monitor for ioBroker",
+		"de": "Cubietruck monitor for ioBroker",
+		"ru": "Cubietruck монитор для ioBroker"
+	},
+        "platform":                 "Javascript/Node.js",
+        "mode":                     "daemon",
+        "icon":                     "cubietruck.png",
+        "enabled":                  true,
+	"extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.cubietruck/master/admin/cubietruck.png",
+	"keywords":                 ["cubietruck", "vis", "GUI", "graphical", "scada"],
+        "readme":                   "https://github.com/ioBroker/ioBroker.cubietruck/blob/master/README.md",
+	"loglevel":                 "info",
+        "type":                     "hardware",
+        "restartAdapters":          ["vis"]
+    },
+    "native": {
+        "test1": true,
+        "test2": 42
+    },
+    "objects": [
+
+    ]
+}
