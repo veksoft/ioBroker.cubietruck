@@ -36,5 +36,7 @@
   "bugs": {
     "url": "https://github.com/veksoft/ioBroker.cubietruck/issues"
   },
+   "main": "main.js",
+  "license": "MIT",
   "readmeFilename": "README.md"
 }

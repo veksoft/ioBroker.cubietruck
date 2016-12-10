@@ -31,8 +31,15 @@
 /*jslint node: true */
 "use strict";
 
+var remoteDebug = require('remoteDebug');
+
 // you have to require the utils module and call adapter function
-var utils =    require(__dirname + '/lib/utils'); // Get common adapter utils
+var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
+
+var fs = require('fs');
+var cp = require('child_process');
+
+var pollTimer = null; // Таймер для опроса
 
 // you have to call the adapter function and pass a options object
 // name has to be set and has to be equal to adapters folder name and main file name excluding extension
@@ -40,58 +47,69 @@ var utils =    require(__dirname + '/lib/utils'); // Get common adapter utils
 var adapter = utils.adapter('cubietruck');
 
 // is called when adapter shuts down - callback has to be called under any circumstances!
-adapter.on('unload', function (callback) {
-    try {
+adapter.on('unload', function (callback)
+{
+    try
+    {
         adapter.log.info('cleaned everything up...');
         callback();
-    } catch (e) {
+    }
+    catch (e)
+    {
         callback();
     }
 });
 
 // is called if a subscribed object changes
-adapter.on('objectChange', function (id, obj) {
+adapter.on('objectChange', function (id, obj)
+{
     // Warning, obj can be null if it was deleted
     adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
 });
 
 // is called if a subscribed state changes
-adapter.on('stateChange', function (id, state) {
+adapter.on('stateChange', function (id, state)
+{
     // Warning, state can be null if it was deleted
     adapter.log.info('stateChange ' + id + ' ' + JSON.stringify(state));
 
     // you can use the ack flag to detect if it is status (true) or command (false)
-    if (state && !state.ack) {
+    if (state && !state.ack)
+    {
         adapter.log.info('ack is not set!');
     }
 });
 
 // Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
-adapter.on('message', function (obj) {
-    if (typeof obj == 'object' && obj.message) {
-        if (obj.command == 'send') {
+adapter.on('message', function (obj)
+{
+    if (typeof obj == 'object' && obj.message)
+    {
+        if (obj.command == 'send')
+        {
             // e.g. send email or pushover or whatever
             console.log('send command');
 
             // Send response in callback if required
-            if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+            if (obj.callback)
+                adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
         }
     }
 });
 
 // is called when databases are connected and adapter received configuration.
 // start here!
-adapter.on('ready', function () {
+adapter.on('ready', function ()
+{
     main();
 });
 
-function main() {
-
+function main()
+{
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // adapter.config:
     adapter.log.info('config test1: ' + adapter.config.test1);
     adapter.log.info('config test1: ' + adapter.config.test2);
-
 
     /**
      *
@@ -103,9 +121,11 @@ function main() {
      *
      */
 
-    adapter.setObject('testVariable', {
+    adapter.setObject('testVariable',
+    {
         type: 'state',
-        common: {
+        common:
+        {
             name: 'testVariable',
             type: 'boolean',
             role: 'indicator'
@@ -137,14 +157,26 @@ function main() {
 
 
     // examples for the checkPassword/checkGroup functions
-    adapter.checkPassword('admin', 'iobroker', function (res) {
+    adapter.checkPassword('admin', 'iobroker', function (res)
+    {
         console.log('check user admin pw ioboker: ' + res);
     });
 
-    adapter.checkGroup('admin', 'admin', function (res) {
+    adapter.checkGroup('admin', 'admin', function (res)
+    {
         console.log('check group user admin group admin: ' + res);
     });
 
+    poolCubietruck();
+    // и запускаем циклический таймер
+    adapter.log.info('start poll timer');
+    pollTimer = setInterval(poolCubietruck, 2000);
+}
 
+var count = 0;
 
+function poolCubietruck()
+{
+    adapter.log.info('poolCubietruck:' + count);
+    count++;
 }
